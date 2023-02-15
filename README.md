@@ -1,4 +1,4 @@
-# metaphor
+# Metaphor
 
 Metaphor is an API mocking library that help you develop feature without having the ready use API.
 

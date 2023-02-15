@@ -1,14 +1,20 @@
+import 'package:metaphor/metaphor.dart';
+import 'package:metaphor/src/interceptor/dio_interceptor.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import '../method_channel/metaphor_method_channel.dart';
 
 abstract class MetaphorPlatform extends PlatformInterface {
+  final MetaphorOptions? options;
+
+  final List<MetaphorResolver>? resolvers;
+
   /// Constructs a MetaphorPlatform.
-  MetaphorPlatform() : super(token: _token);
+  MetaphorPlatform({this.options, this.resolvers}) : super(token: _token);
 
   static final Object _token = Object();
 
-  static MetaphorPlatform _instance = MethodChannelMetaphor();
+  static MetaphorPlatform _instance = MethodChannelMetaphor.instance;
 
   /// The default instance of [MetaphorPlatform] to use.
   ///
@@ -23,7 +29,7 @@ abstract class MetaphorPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+  MetaphoreDioInterceptor dioInterceptor() {
+    throw UnimplementedError('dioInterceptor() has not been implemented.');
   }
 }
