@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:metaphor/metaphor_method_channel.dart';
+import 'package:metaphor/src/method_channel/metaphor_method_channel.dart';
 
 void main() {
   MethodChannelMetaphor platform = MethodChannelMetaphor();

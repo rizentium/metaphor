@@ -1,6 +1,6 @@
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'metaphor_method_channel.dart';
+import '../method_channel/metaphor_method_channel.dart';
 
 abstract class MetaphorPlatform extends PlatformInterface {
   /// Constructs a MetaphorPlatform.
