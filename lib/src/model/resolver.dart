@@ -1,13 +1,17 @@
 import 'package:dio/dio.dart';
+import '../extension/enum.dart';
+
+// ignore: constant_identifier_names
+enum MetaphorRequestType { GET, POST, PUT, PATCH, DELETE }
 
 class MetaphorRequestOptions extends RequestOptions {
   MetaphorRequestOptions({
     String path = '',
-    String? method,
+    MetaphorRequestType? method,
   }) : super(
           path: path,
-          method: method,
-        ) {}
+          method: method?.getValue(),
+        );
 }
 
 class MetaphorResolver extends Response {

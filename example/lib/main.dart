@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
       resolvers: [
         MetaphorResolver(
           requestOptions: MetaphorRequestOptions(
-            method: "GET",
+            method: MetaphorRequestType.GET,
             path: "/v1/users",
           ),
           data: {"is_mocked": true},
