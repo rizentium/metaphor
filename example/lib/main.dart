@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import 'dart:async';
+import 'dart:convert';
 
-import 'package:flutter/services.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+
 import 'package:metaphor/metaphor.dart';
 
 void main() {
@@ -16,48 +17,69 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-  final _metaphorPlugin = Metaphor();
+  final _dio = Dio();
+  final _metaphorPlugin = Metaphor.initialize(
+    options: MetaphorOptions(
+      resolvers: [
+        MetaphorResolver(
+          requestOptions: MetaphorRequestOptions(
+            method: MetaphorRequestType.GET,
+            path: "/v1/users",
+          ),
+          data: {"is_mocked": true},
+        ),
+      ],
+    ),
+  );
 
   @override
   void initState() {
+    _dio.interceptors.add(_metaphorPlugin.dioInterceptor());
     super.initState();
-    initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    // We also handle the message potentially returning null.
-    try {
-      platformVersion =
-          await _metaphorPlugin.getPlatformVersion() ?? 'Unknown platform version';
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
-        ),
+      home: Dashboard(dio: _dio),
+    );
+  }
+}
+
+class Dashboard extends StatelessWidget {
+  final Dio _dio;
+  const Dashboard({super.key, required Dio dio}) : _dio = dio;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Metaphor Example'),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          OutlinedButton(
+            onPressed: () => _getUsers().then(
+              (value) => _showSnackBar(context, json.encode(value)),
+            ),
+            child: const Text('Get Users'),
+          ),
+        ],
       ),
     );
+  }
+
+  Future<dynamic> _getUsers() async {
+    const url = 'https://603fdc88f3abf00017785396.mockapi.io';
+    final response = await _dio.get('$url/v1/users');
+
+    return response.data;
+  }
+
+  _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("Result: $message"),
+    ));
   }
 }
